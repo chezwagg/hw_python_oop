@@ -18,12 +18,13 @@ class InfoMessage:
                 f'Ср. скорость: {self.speed:.3f} км/ч; '
                 f'Потрачено ккал: {self.calories:.3f}.')
 
+
 @dataclass
 class Training:
     """Базовый класс тренировки."""
     LEN_STEP = 0.65
     M_IN_KM = 1000
-    MIN_IN_HR = 60
+    MN_IN_HR = 60
 
     action: int
     duration: float
@@ -33,11 +34,9 @@ class Training:
         """Получить дистанцию в км."""
         return self.action * self.LEN_STEP / self.M_IN_KM
 
-
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
         return self.get_distance() / self.duration
-
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
@@ -54,7 +53,6 @@ class Training:
         return info_message
 
 
-
 class Running(Training):
     """Тренировка: бег."""
     def get_spent_calories(self) -> float:
@@ -62,7 +60,7 @@ class Running(Training):
         coeff_calorie_1: int = 18
         coeff_calorie_2: int = 20
         return ((coeff_calorie_1 * self.get_mean_speed() - coeff_calorie_2)
-                * self.weight / self.M_IN_KM * (self.duration * self.MIN_IN_HR))
+                * self.weight / self.M_IN_KM * (self.duration * self.MN_IN_HR))
 
 
 @dataclass
@@ -70,13 +68,13 @@ class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
     CEF_1 = 0.035
     CEF_2 = 0.029
-
     height: int
-    
+
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         return ((self.CEF_1 * self.weight + (self.get_mean_speed() ** 2
-                // self.height) * self.CEF_2 * self.weight) * (self.duration * self.MIN_IN_HR))
+                // self.height) * self.CEF_2 * self.weight)
+                * (self.duration * self.MN_IN_HR))
 
 
 @dataclass
