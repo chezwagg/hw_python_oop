@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+
+
 @dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
@@ -30,16 +32,17 @@ class Training:
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
         return self.action * self.LEN_STEP / self.M_IN_KM
-        pass
+
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
         return self.get_distance() / self.duration
-        pass
+
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        raise NotImplementedError(
+            'Определите get_spent_calories в %s.' % (self.__class__.__name__))
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -49,7 +52,7 @@ class Training:
                                    self.get_mean_speed(),
                                    self.get_spent_calories())
         return info_message
-        pass
+
 
 
 class Running(Training):
@@ -61,7 +64,6 @@ class Running(Training):
         return ((coeff_calorie_1 * self.get_mean_speed() - coeff_calorie_2)
                 * self.weight / self.M_IN_KM * (self.duration * self.MIN_IN_HR))
 
-    pass
 
 @dataclass
 class SportsWalking(Training):
@@ -70,13 +72,12 @@ class SportsWalking(Training):
     CEF_2 = 0.029
 
     height: int
-
-    CEF_1: float = 0.035
+    
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         return ((self.CEF_1 * self.weight + (self.get_mean_speed() ** 2
                 // self.height) * self.CEF_2 * self.weight) * (self.duration * self.MIN_IN_HR))
-    pass
+
 
 @dataclass
 class Swimming(Training):
@@ -106,7 +107,6 @@ def read_package(workout_type: str, data: list) -> Training:
         'WLK': SportsWalking}
     training = workout_type_and_class[workout_type](*data)
     return training
-    pass
 
 
 def main(training: Training) -> None:
